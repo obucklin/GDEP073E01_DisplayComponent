@@ -1,0 +1,50 @@
+esphome:
+  name: epaper-display  # Required unique identifier
+  platform: ESP32       # ESP32 or ESP8266
+  board: nodemcu-32s    # Must match your hardware
+
+# Required for e-paper displays
+spi:
+  clk_pin: GPIO14
+  mosi_pin: GPIO13
+  miso_pin: GPIO12      # Can be removed if not used
+  mode: MODE0
+  clock_speed: 10MHz
+
+# Your custom component
+external_components:
+  - source:
+      type: git
+      url: https://github.com/yourusername/esphome-custom-components
+    components: [gdep073e01]
+
+display:
+  - platform: gdep073e01
+    id: epaper_display
+    busy_pin: GPIO4
+    reset_pin: GPIO5
+    dc_pin: GPIO2
+    cs_pin: GPIO15
+    update_interval: 60s
+    lambda: |-
+      it.print(50, 50, id(font_default), "Hello World!");
+      it.line(50, 70, 200, 70);
+
+# Optional but recommended
+font:
+  - file: "gfonts://Roboto"
+    id: font_default
+    size: 20
+
+logger:
+  level: DEBUG
+
+ota:
+  password: "your_ota_password"
+
+wifi:
+  ssid: "your_wifi"
+  password: "your_password"
+
+api:
+  password: "your_api_password"

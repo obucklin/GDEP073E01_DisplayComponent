@@ -1,0 +1,341 @@
+// custom_epd_w21.cpp
+#include "GDEP073E01.h"
+#include "esphome/components/display/display_buffer.h"
+
+void GDEP073E01::setup()
+{
+  // Initialize SPI
+  spi_ = new SPIClass(HSPI);
+  spi_->begin(SCK, MISO, MOSI, SS);
+
+  // Initialize pins
+  reset_pin_->setup();
+  dc_pin_->setup();
+  cs_pin_->setup();
+  busy_pin_->setup();
+
+  // Hardware reset
+  reset_pin_->digital_write(true);
+  delay(10);
+  reset_pin_->digital_write(false);
+  delay(10);
+  reset_pin_->digital_write(true);
+  delay(10);
+
+  initialize_display();
+}
+
+void GDEP073E01::initialize_display()
+{
+
+  EPD_W21_RST_0; // Module reset
+  delay(10);     // At least 10ms delay
+  EPD_W21_RST_1;
+  delay(10); // At least 10ms delay
+
+  send_command(0xAA); // CMDH
+  send_data(0x49);
+  send_data(0x55);
+  send_data(0x20);
+  send_data(0x08);
+  send_data(0x09);
+  send_data(0x18);
+
+  send_command(PWRR); //
+  send_data(0x3F);
+
+  send_command(PSR);
+  send_data(0x5F);
+  send_data(0x69);
+
+  send_command(POFS);
+  send_data(0x00);
+  send_data(0x54);
+  send_data(0x00);
+  send_data(0x44);
+
+  send_command(BTST1);
+  send_data(0x40);
+  send_data(0x1F);
+  send_data(0x1F);
+  send_data(0x2C);
+
+  send_command(BTST2);
+  send_data(0x6F);
+  send_data(0x1F);
+  send_data(0x17);
+  send_data(0x49);
+
+  send_command(BTST3);
+  send_data(0x6F);
+  send_data(0x1F);
+  send_data(0x1F);
+  send_data(0x22);
+  send_command(PLL);
+  send_data(0x08);
+  send_command(CDI);
+  send_data(0x3F);
+
+  send_command(TCON);
+  send_data(0x02);
+  send_data(0x00);
+
+  send_command(TRES);
+  send_data(0x03);
+  send_data(0x20);
+  send_data(0x01);
+  send_data(0xE0);
+
+  send_command(T_VDCS);
+  send_data(0x01);
+
+  send_command(PWS);
+  send_data(0x2F);
+
+  send_command(0x04); // PWR on
+  wait_until_idle();  // waiting for the electronic paper IC to release the idle signal
+}
+
+void GDEP073E01::wait_until_idle()
+{
+  while (busy_pin_->digital_read() == LOW)
+  {
+    delay(1);
+  }
+}
+
+void GDEP073E01::send_command(uint8_t command)
+{
+  dc_pin_->digital_write(LOW);
+  cs_pin_->digital_write(LOW);
+  spi_->transfer(command);
+  cs_pin_->digital_write(HIGH);
+}
+
+void GDEP073E01::send_data(uint8_t data)
+{
+  dc_pin_->digital_write(HIGH);
+  cs_pin_->digital_write(LOW);
+  spi_->transfer(data);
+  cs_pin_->digital_write(HIGH);
+}
+
+void EPD_init_fast(void)
+{
+
+  EPD_W21_Init(); // Electronic paper IC reset
+
+  EPD_W21_WriteCMD(0xAA); // CMDH
+  EPD_W21_WriteDATA(0x49);
+  EPD_W21_WriteDATA(0x55);
+  EPD_W21_WriteDATA(0x20);
+  EPD_W21_WriteDATA(0x08);
+  EPD_W21_WriteDATA(0x09);
+  EPD_W21_WriteDATA(0x18);
+
+  EPD_W21_WriteCMD(PWRR);
+  EPD_W21_WriteDATA(0x3F);
+  EPD_W21_WriteDATA(0x00);
+  EPD_W21_WriteDATA(0x32);
+  EPD_W21_WriteDATA(0x2A);
+  EPD_W21_WriteDATA(0x0E);
+  EPD_W21_WriteDATA(0x2A);
+
+  EPD_W21_WriteCMD(PSR);
+  EPD_W21_WriteDATA(0x5F);
+  EPD_W21_WriteDATA(0x69);
+
+  EPD_W21_WriteCMD(POFS);
+  EPD_W21_WriteDATA(0x00);
+  EPD_W21_WriteDATA(0x54);
+  EPD_W21_WriteDATA(0x00);
+  EPD_W21_WriteDATA(0x44);
+
+  EPD_W21_WriteCMD(BTST1);
+  EPD_W21_WriteDATA(0x40);
+  EPD_W21_WriteDATA(0x1F);
+  EPD_W21_WriteDATA(0x1F);
+  EPD_W21_WriteDATA(0x2C);
+
+  EPD_W21_WriteCMD(BTST2);
+  EPD_W21_WriteDATA(0x6F);
+  EPD_W21_WriteDATA(0x1F);
+  EPD_W21_WriteDATA(0x16);
+  EPD_W21_WriteDATA(0x25);
+
+  EPD_W21_WriteCMD(BTST3);
+  EPD_W21_WriteDATA(0x6F);
+  EPD_W21_WriteDATA(0x1F);
+  EPD_W21_WriteDATA(0x1F);
+  EPD_W21_WriteDATA(0x22);
+
+  EPD_W21_WriteCMD(0x13); // IPC
+  EPD_W21_WriteDATA(0x00);
+  EPD_W21_WriteDATA(0x04);
+
+  EPD_W21_WriteCMD(PLL);
+  EPD_W21_WriteDATA(0x02);
+
+  EPD_W21_WriteCMD(0x41); // TSE
+  EPD_W21_WriteDATA(0x00);
+
+  EPD_W21_WriteCMD(CDI);
+  EPD_W21_WriteDATA(0x3F);
+
+  EPD_W21_WriteCMD(TCON);
+  EPD_W21_WriteDATA(0x02);
+  EPD_W21_WriteDATA(0x00);
+
+  EPD_W21_WriteCMD(TRES);
+  EPD_W21_WriteDATA(0x03);
+  EPD_W21_WriteDATA(0x20);
+  EPD_W21_WriteDATA(0x01);
+  EPD_W21_WriteDATA(0xE0);
+
+  EPD_W21_WriteCMD(VDCS);
+  EPD_W21_WriteDATA(0x1E);
+
+  EPD_W21_WriteCMD(T_VDCS);
+  EPD_W21_WriteDATA(0x01);
+
+  EPD_W21_WriteCMD(0x86); // AGID
+  EPD_W21_WriteDATA(0x00);
+
+  EPD_W21_WriteCMD(PWS);
+  EPD_W21_WriteDATA(0x2F);
+
+  EPD_W21_WriteCMD(0xE0); // CCSET
+  EPD_W21_WriteDATA(0x00);
+
+  EPD_W21_WriteCMD(0xE6); // TSSET
+  EPD_W21_WriteDATA(0x00);
+
+  EPD_W21_WriteCMD(0x04); // PWR on
+  lcd_chkstatus();        // waiting for the electronic paper IC to release the idle signal
+}
+
+void GDEP073E01::EPD_sleep(void)
+{
+  EPD_W21_WriteCMD(0X02); // power off
+  EPD_W21_WriteDATA(0x00);
+  lcd_chkstatus(); // waiting for the electronic paper IC to release the idle signal
+  /*EPD_W21_WriteCMD(0X07);   //deep sleep
+  EPD_W21_WriteDATA(0xA5);*/
+}
+
+unsigned char GDEP073E01::get_color(Color color)
+{
+    int16_t red = color.r;
+    int16_t green = color.g;
+    int16_t blue = color.b;
+
+    if ((red < 0x80) && (green < 0x80) && (blue < 0x80))
+      cv7 = 0x00; // black
+    else if ((red >= 0x80) && (green >= 0x80) && (blue >= 0x80))
+      cv7 = 0x01; // white
+    else if ((green >= 0x80) && (blue >= 0x80))
+      cv7 = green > blue ? 0x06 : 0x05; // green, blue
+    else if ((red >= 0x80) && (green >= 0x80))
+      cv7 = green > red ? 0x06 : 0x03; // yellow, orange
+    else if (red >= 0x80)
+      cv7 = 0x03; // red
+    else if (green >= 0x80)
+      cv7 = 0x06; // green
+    else
+      cv7 = 0x05; // blue
+}
+  return cv7;
+}
+
+static uint16 GDEP073E01::get_width_internal()
+{
+  return 800;
+}
+
+static uint16 GDEP073E01::get_height_internal()
+{
+  return 480;
+}
+
+void GDEP073E01::clear(void)
+{
+  send_command(0x10);
+  for (i = 0; i < 480; i++)
+  {
+    for (j = 0; j < 800 / 2; j++)
+    {
+      send_data(0x00);
+    }
+  }
+  // Refresh
+  send_command(0x12); // DISPLAY REFRESH
+  send_data(0x00);
+  delay(1);          //!!!The delay here is necessary, 200uS at least!!!
+  wait_until_idle(); // waiting for the electronic paper IC to release the idle signal
+}
+
+void HOT GDEP073E01::draw_absolute_pixel_internal(int x, int y, unsigned char color)
+{
+  if (x >= this->get_width_internal() || y >= this->get_height_internal() || x < 0 || y < 0)
+    return;
+
+  const uint32_t pos = x + (y * (this->get_width_internal() / 2u));
+
+  if x
+    &0x01:
+    {
+      this->buffer_[pos] &= 0x0f |= (get_color(color) << 4);
+    }
+  else
+  {
+    this->buffer_[pos] &= 0xf0 |= get_color(color);
+  }
+}
+
+uint32_t GDEP073E01::get_buffer_length_()
+{
+  return this->get_width_internal() * this->get_height_internal() / 2u; // 4 bits per pixel
+} // black and red buffer
+
+void GDEP073E01::fill(Color color)
+{
+  const uint8_t fill = color.is_on() ? 0x00 : 0xFF;
+  for (uint32_t i = 0; i < this->get_buffer_length_(); i++)
+    this->buffer_[i] = color | (color << 4);
+}
+
+void GDEP073E01::prep_image(const unsigned char *picData)
+{
+  unsigned int row, col, pixel_pair, pos;
+  unsigned char left_pixel, r;
+  unsigned char data_H, data_L, data;
+  uint_16 col_count = this->get_width_internal() / 2;
+
+  for (row = 0; row < 480; row++)
+  {
+    pixel_pair = 0;
+    for (col = 0; col < col_count; col++)
+    {
+      left_pixel = picData[row * 800 + pixel_pair++];
+      right_pixel = picData[row * 800 + pixel_pair++];
+      data_H = this->get_color(left_pixel) << 4;
+      data_L = this->get_color(right_pixel);
+      data = data_H | data_L;
+      pos = row * col_count + double_col;
+      this->buffer_[pos] = data;
+    }
+  }
+}
+
+void GDEP073E01::display()
+{
+  // Acep_color(White); //Each refresh must be cleaned first
+  send_command(0x10);
+  this->write_array(this->buffer_, this->get_buffer_length_());
+  // Refresh
+  send_command(0x12); // DISPLAY REFRESH
+  send_data(0x00);
+  delay(1);                //!!!The delay here is necessary, 200uS at least!!!
+  this->wait_until_idle(); // waiting for the electronic paper IC to release the idle signal
+  this->deep_sleep();
+}
