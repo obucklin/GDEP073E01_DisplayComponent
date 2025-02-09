@@ -1,8 +1,8 @@
 // custom_epd_w21.cpp
-#include "GDEP073E01.h"
+#include "gdep073e01.h"
 #include "esphome/components/display/display_buffer.h"
 
-void GDEP073E01::setup()
+void gdep073e01::setup()
 {
   // Initialize SPI
   spi_ = new SPIClass(HSPI);
@@ -25,7 +25,18 @@ void GDEP073E01::setup()
   initialize_display();
 }
 
-void GDEP073E01::initialize_display()
+void gdep073e01::dump_config() {
+  LOG_DISPLAY("", "gdep073e01", this);
+  ESP_LOGCONFIG(TAG, "  gdep073e01");
+   
+  ESP_LOGCONFIG(TAG, "  Full Update Every: %" PRIu32, this->full_update_every_);
+  LOG_PIN("  Reset Pin: ", this->reset_pin_);
+  LOG_PIN("  DC Pin: ", this->dc_pin_);
+  LOG_PIN("  Busy Pin: ", this->busy_pin_);
+  LOG_UPDATE_INTERVAL(this);
+}
+
+void gdep073e01::initialize_display()
 {
 
   EPD_W21_RST_0; // Module reset
@@ -96,7 +107,7 @@ void GDEP073E01::initialize_display()
   wait_until_idle();  // waiting for the electronic paper IC to release the idle signal
 }
 
-void GDEP073E01::wait_until_idle()
+void gdep073e01::wait_until_idle()
 {
   while (busy_pin_->digital_read() == LOW)
   {
@@ -104,7 +115,7 @@ void GDEP073E01::wait_until_idle()
   }
 }
 
-void GDEP073E01::send_command(uint8_t command)
+void gdep073e01::send_command(uint8_t command)
 {
   dc_pin_->digital_write(LOW);
   cs_pin_->digital_write(LOW);
@@ -112,7 +123,7 @@ void GDEP073E01::send_command(uint8_t command)
   cs_pin_->digital_write(HIGH);
 }
 
-void GDEP073E01::send_data(uint8_t data)
+void gdep073e01::send_data(uint8_t data)
 {
   dc_pin_->digital_write(HIGH);
   cs_pin_->digital_write(LOW);
@@ -120,114 +131,22 @@ void GDEP073E01::send_data(uint8_t data)
   cs_pin_->digital_write(HIGH);
 }
 
-void EPD_init_fast(void)
+
+void gdep073e01::sleep(void)
 {
-
-  EPD_W21_Init(); // Electronic paper IC reset
-
-  EPD_W21_WriteCMD(0xAA); // CMDH
-  EPD_W21_WriteDATA(0x49);
-  EPD_W21_WriteDATA(0x55);
-  EPD_W21_WriteDATA(0x20);
-  EPD_W21_WriteDATA(0x08);
-  EPD_W21_WriteDATA(0x09);
-  EPD_W21_WriteDATA(0x18);
-
-  EPD_W21_WriteCMD(PWRR);
-  EPD_W21_WriteDATA(0x3F);
-  EPD_W21_WriteDATA(0x00);
-  EPD_W21_WriteDATA(0x32);
-  EPD_W21_WriteDATA(0x2A);
-  EPD_W21_WriteDATA(0x0E);
-  EPD_W21_WriteDATA(0x2A);
-
-  EPD_W21_WriteCMD(PSR);
-  EPD_W21_WriteDATA(0x5F);
-  EPD_W21_WriteDATA(0x69);
-
-  EPD_W21_WriteCMD(POFS);
-  EPD_W21_WriteDATA(0x00);
-  EPD_W21_WriteDATA(0x54);
-  EPD_W21_WriteDATA(0x00);
-  EPD_W21_WriteDATA(0x44);
-
-  EPD_W21_WriteCMD(BTST1);
-  EPD_W21_WriteDATA(0x40);
-  EPD_W21_WriteDATA(0x1F);
-  EPD_W21_WriteDATA(0x1F);
-  EPD_W21_WriteDATA(0x2C);
-
-  EPD_W21_WriteCMD(BTST2);
-  EPD_W21_WriteDATA(0x6F);
-  EPD_W21_WriteDATA(0x1F);
-  EPD_W21_WriteDATA(0x16);
-  EPD_W21_WriteDATA(0x25);
-
-  EPD_W21_WriteCMD(BTST3);
-  EPD_W21_WriteDATA(0x6F);
-  EPD_W21_WriteDATA(0x1F);
-  EPD_W21_WriteDATA(0x1F);
-  EPD_W21_WriteDATA(0x22);
-
-  EPD_W21_WriteCMD(0x13); // IPC
-  EPD_W21_WriteDATA(0x00);
-  EPD_W21_WriteDATA(0x04);
-
-  EPD_W21_WriteCMD(PLL);
-  EPD_W21_WriteDATA(0x02);
-
-  EPD_W21_WriteCMD(0x41); // TSE
-  EPD_W21_WriteDATA(0x00);
-
-  EPD_W21_WriteCMD(CDI);
-  EPD_W21_WriteDATA(0x3F);
-
-  EPD_W21_WriteCMD(TCON);
-  EPD_W21_WriteDATA(0x02);
-  EPD_W21_WriteDATA(0x00);
-
-  EPD_W21_WriteCMD(TRES);
-  EPD_W21_WriteDATA(0x03);
-  EPD_W21_WriteDATA(0x20);
-  EPD_W21_WriteDATA(0x01);
-  EPD_W21_WriteDATA(0xE0);
-
-  EPD_W21_WriteCMD(VDCS);
-  EPD_W21_WriteDATA(0x1E);
-
-  EPD_W21_WriteCMD(T_VDCS);
-  EPD_W21_WriteDATA(0x01);
-
-  EPD_W21_WriteCMD(0x86); // AGID
-  EPD_W21_WriteDATA(0x00);
-
-  EPD_W21_WriteCMD(PWS);
-  EPD_W21_WriteDATA(0x2F);
-
-  EPD_W21_WriteCMD(0xE0); // CCSET
-  EPD_W21_WriteDATA(0x00);
-
-  EPD_W21_WriteCMD(0xE6); // TSSET
-  EPD_W21_WriteDATA(0x00);
-
-  EPD_W21_WriteCMD(0x04); // PWR on
-  lcd_chkstatus();        // waiting for the electronic paper IC to release the idle signal
+  send_command(0X02); // power off
+  send_data(0x00);
+  this->wait_until_idle(); // waiting for the electronic paper IC to release the idle signal
+  /*send_command(0X07);   //deep sleep
+  send_data(0xA5);*/
 }
 
-void GDEP073E01::EPD_sleep(void)
-{
-  EPD_W21_WriteCMD(0X02); // power off
-  EPD_W21_WriteDATA(0x00);
-  lcd_chkstatus(); // waiting for the electronic paper IC to release the idle signal
-  /*EPD_W21_WriteCMD(0X07);   //deep sleep
-  EPD_W21_WriteDATA(0xA5);*/
-}
-
-unsigned char GDEP073E01::get_color(Color color)
+unsigned char gdep073e01::get_color(Color color)
 {
     int16_t red = color.r;
     int16_t green = color.g;
     int16_t blue = color.b;
+    unsigned char cv7 = 0x01
 
     if ((red < 0x80) && (green < 0x80) && (blue < 0x80))
       cv7 = 0x00; // black
@@ -247,17 +166,10 @@ unsigned char GDEP073E01::get_color(Color color)
   return cv7;
 }
 
-static uint16 GDEP073E01::get_width_internal()
-{
-  return 800;
-}
+uint16_t gdep073e01::get_width_internal() const { return 800; }
+uint16_t gdep073e01::get_height_internal() const { return 480; }
 
-static uint16 GDEP073E01::get_height_internal()
-{
-  return 480;
-}
-
-void GDEP073E01::clear(void)
+void gdep073e01::clear(void)
 {
   send_command(0x10);
   for (i = 0; i < 480; i++)
@@ -274,37 +186,36 @@ void GDEP073E01::clear(void)
   wait_until_idle(); // waiting for the electronic paper IC to release the idle signal
 }
 
-void HOT GDEP073E01::draw_absolute_pixel_internal(int x, int y, unsigned char color)
+void HOT gdep073e01::draw_absolute_pixel_internal(int x, int y, unsigned char color)
 {
   if (x >= this->get_width_internal() || y >= this->get_height_internal() || x < 0 || y < 0)
     return;
 
   const uint32_t pos = x + (y * (this->get_width_internal() / 2u));
 
-  if x
-    &0x01:
-    {
-      this->buffer_[pos] &= 0x0f |= (get_color(color) << 4);
-    }
-  else
-  {
-    this->buffer_[pos] &= 0xf0 |= get_color(color);
-  }
+if (x & 0x01) {
+  this->buffer_[pos] = (this->buffer_[pos] & 0x0F) | (color << 4);
+} else {
+  this->buffer_[pos] = (this->buffer_[pos] & 0xF0) | color;
 }
 
-uint32_t GDEP073E01::get_buffer_length_()
+}
+
+uint32_t gdep073e01::get_buffer_length_()
 {
   return this->get_width_internal() * this->get_height_internal() / 2u; // 4 bits per pixel
 } // black and red buffer
 
-void GDEP073E01::fill(Color color)
+void gdep073e01::fill(Color color)
 {
+  char color_internal = this->get_color(color);
+  char double_color = color_internal | (color_internal << 4)
   const uint8_t fill = color.is_on() ? 0x00 : 0xFF;
   for (uint32_t i = 0; i < this->get_buffer_length_(); i++)
-    this->buffer_[i] = color | (color << 4);
+    this->buffer_[i] = double_color;
 }
 
-void GDEP073E01::prep_image(const unsigned char *picData)
+void gdep073e01::display_image(const unsigned char *picData)
 {
   unsigned int row, col, pixel_pair, pos;
   unsigned char left_pixel, r;
@@ -321,13 +232,13 @@ void GDEP073E01::prep_image(const unsigned char *picData)
       data_H = this->get_color(left_pixel) << 4;
       data_L = this->get_color(right_pixel);
       data = data_H | data_L;
-      pos = row * col_count + double_col;
+      pos = row * col_count + col;
       this->buffer_[pos] = data;
     }
   }
 }
 
-void GDEP073E01::display()
+void gdep073e01::display()
 {
   // Acep_color(White); //Each refresh must be cleaned first
   send_command(0x10);
@@ -337,5 +248,5 @@ void GDEP073E01::display()
   send_data(0x00);
   delay(1);                //!!!The delay here is necessary, 200uS at least!!!
   this->wait_until_idle(); // waiting for the electronic paper IC to release the idle signal
-  this->deep_sleep();
+  this->sleep();
 }

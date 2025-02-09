@@ -5,7 +5,7 @@
 #include "esphome/components/spi/spi.h"
 // #include <SPI.h>
 
-class GDEP073E01 : public esphome::Component, public esphome::display::DisplayBuffer {
+class gdep073e01 : public esphome::Component, public esphome::display::DisplayBuffer {
  public:
   void setup() override;
   void update() override;
@@ -28,7 +28,8 @@ class GDEP073E01 : public esphome::Component, public esphome::display::DisplayBu
   GPIOPin *cs_pin_{nullptr};
   SPIClass *spi_{nullptr};
 
-
+  uint16_t get_width_internal() const override;
+  uint16_t get_height_internal() const override;
 
 #ifndef _GDEP073E01_H_
 #define _GDEP073E01_H_

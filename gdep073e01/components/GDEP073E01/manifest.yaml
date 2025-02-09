@@ -1,6 +1,6 @@
 manifest:
-  name: "GDEP073E01 E-Paper Display"
-  description: "Custom component for GDEP073E01 7.3\" e-paper display"
+  name: "gdep073e01 E-Paper Display"
+  description: "Custom component for gdep073e01 7.3\" e-paper display"
   version: "1.0.0"
   author: "Oliver Bucklin"
   codeowners:
