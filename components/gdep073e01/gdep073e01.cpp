@@ -146,7 +146,7 @@ unsigned char GDEP073E01::get_color(Color color)
     int16_t red = color.r;
     int16_t green = color.g;
     int16_t blue = color.b;
-    unsigned char cv7 = 0x01
+    unsigned char cv7 = 0x01;
 
     if ((red < 0x80) && (green < 0x80) && (blue < 0x80))
       cv7 = 0x00; // black
@@ -172,9 +172,9 @@ uint16_t GDEP073E01::get_height_internal() const { return 480; }
 void GDEP073E01::clear(void)
 {
   send_command(0x10);
-  for (i = 0; i < 480; i++)
+  for (int i = 0; i < 480; i++)
   {
-    for (j = 0; j < 800 / 2; j++)
+    for (int j = 0; j < 800 / 2; j++)
     {
       send_data(0x00);
     }

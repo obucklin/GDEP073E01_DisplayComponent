@@ -8,8 +8,8 @@ CODEOWNERS = ["@your_username"]
 DEPENDENCIES = ["spi"]
 
 gdep073e01_ns = cg.esphome_ns.namespace("gdep073e01")
-gdep073e01 = gdep073e01_ns.class_(
-    "gdep073e01", display.DisplayBuffer, spi.SPIDevice
+GDEP073E01 = gdep073e01_ns.class_(
+    "GDEP073E01", display.DisplayBuffer, spi.SPIDevice
 )
 
 CONF_BUSY_PIN = "busy_pin"
@@ -18,7 +18,7 @@ CONF_DC_PIN = "dc_pin"
 
 CONFIG_SCHEMA = display.FULL_DISPLAY_SCHEMA.extend(
     {
-        cv.GenerateID(): cv.declare_id(gdep073e01),
+        cv.GenerateID(): cv.declare_id(GDEP073E01),
         cv.Required(CONF_BUSY_PIN): cv.use_id(esphome.GPIOPin),
         cv.Required(CONF_RESET_PIN): cv.use_id(esphome.GPIOPin),
         cv.Required(CONF_DC_PIN): cv.use_id(esphome.GPIOPin),
