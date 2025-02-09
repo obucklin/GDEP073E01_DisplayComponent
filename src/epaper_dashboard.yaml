@@ -38,7 +38,7 @@ spi:
   mosi_pin: GPIO19
 
 display:
-  - platform: gdep073e01
+  - platform: GDEP073E01
     cs_pin: GPIO0
     dc_pin: GPIO1
     busy_pin: GPIO2
@@ -46,7 +46,7 @@ display:
     model: 2.90in
     full_update_every: 30
     lambda: |-
-      it.fill(Color(255,0,0,0)));
+      it.fill(Color(255,0,0,0));
 
 captive_portal:    
     
