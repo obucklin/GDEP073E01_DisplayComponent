@@ -1,11 +1,12 @@
 import esphome
+from esphome.components.gpio import GPIOPin  # <-- Add this line
 import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.components import display, spi
 from esphome.const import CONF_ID, CONF_LAMBDA
 
 CODEOWNERS = ["@your_username"]
-DEPENDENCIES = ["spi"]
+DEPENDENCIES = ["spi", "gpio"]
 
 gdep073e01_ns = cg.esphome_ns.namespace("GDEP073E01")
 GDEP073E01 = gdep073e01_ns.class_(
@@ -19,9 +20,9 @@ CONF_DC_PIN = "dc_pin"
 CONFIG_SCHEMA = display.FULL_DISPLAY_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(GDEP073E01),
-        cv.Required(CONF_BUSY_PIN): cv.use_id(esphome.GPIOPin),
-        cv.Required(CONF_RESET_PIN): cv.use_id(esphome.GPIOPin),
-        cv.Required(CONF_DC_PIN): cv.use_id(esphome.GPIOPin),
+        cv.Required(CONF_BUSY_PIN): cv.use_id(GPIOPin),
+        cv.Required(CONF_RESET_PIN): cv.use_id(GPIOPin),
+        cv.Required(CONF_DC_PIN): cv.use_id(GPIOPin),
     }
 ).extend(spi.spi_device_schema(cs_pin_required=True))
 
