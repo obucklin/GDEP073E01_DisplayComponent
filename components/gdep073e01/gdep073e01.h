@@ -5,7 +5,7 @@
 // #include <SPI.h>
 
 class GDEP073E01 : public esphome::Component, public esphome::display::DisplayBuffer {
- public:
+   public:
   void setup() override;
   void update() override;
   void dump_config() override;

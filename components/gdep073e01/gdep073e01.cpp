@@ -1,5 +1,5 @@
 // custom_epd_w21.cpp
-#include "GDEP073E01.h"
+#include "gdep073e01.h"
 #include "esphome/components/display/display_buffer.h"
 
 void GDEP073E01::setup()
@@ -220,7 +220,7 @@ void GDEP073E01::display_image(const unsigned char *picData)
   unsigned int row, col, pixel_pair, pos;
   unsigned char left_pixel, r;
   unsigned char data_H, data_L, data;
-  uint_16 col_count = this->get_width_internal() / 2;
+  uint16_t col_count = this->get_width_internal() / 2;
 
   for (row = 0; row < 480; row++)
   {

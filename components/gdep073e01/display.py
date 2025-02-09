@@ -7,8 +7,8 @@ from esphome.const import CONF_ID, CONF_LAMBDA
 CODEOWNERS = ["@your_username"]
 DEPENDENCIES = ["spi"]
 
-GDEP073E01_ns = cg.esphome_ns.namespace("GDEP073E01")
-GDEP073E01 = GDEP073E01_ns.class_(
+gdep073e01_ns = cg.esphome_ns.namespace("GDEP073E01")
+GDEP073E01 = gdep073e01_ns.class_(
     "GDEP073E01", display.DisplayBuffer, spi.SPIDevice
 )
 
