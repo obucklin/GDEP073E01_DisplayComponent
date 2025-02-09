@@ -1,0 +1,20 @@
+# Ignore secrets.yaml
+src/secrets.yaml
+
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+
+# Ignore PlatformIO build files
+.pio/
+build/
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore other common files
+*.log
+*.tmp
