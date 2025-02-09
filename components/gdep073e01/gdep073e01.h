@@ -1,11 +1,10 @@
-// custom_epd_w21.h
 #pragma once
 #include "esphome/core/component.h"
 #include "esphome/components/display/display_buffer.h"
 #include "esphome/components/spi/spi.h"
 // #include <SPI.h>
 
-class gdep073e01 : public esphome::Component, public esphome::display::DisplayBuffer {
+class GDEP073E01 : public esphome::Component, public esphome::display::DisplayBuffer {
  public:
   void setup() override;
   void update() override;
