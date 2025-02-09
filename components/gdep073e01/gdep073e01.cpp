@@ -26,8 +26,8 @@ void GDEP073E01::setup()
 }
 
 void GDEP073E01::dump_config() {
-  LOG_DISPLAY("", "gdep073e01", this);
-  ESP_LOGCONFIG(TAG, "  gdep073e01");
+  LOG_DISPLAY("", "GDEP073E01", this);
+  ESP_LOGCONFIG(TAG, "  GDEP073E01");
    
   ESP_LOGCONFIG(TAG, "  Full Update Every: %" PRIu32, this->full_update_every_);
   LOG_PIN("  Reset Pin: ", this->reset_pin_);
