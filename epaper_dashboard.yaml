@@ -1,50 +1,53 @@
 esphome:
-  name: epaper-display  # Required unique identifier
-  platform: ESP32       # ESP32 or ESP8266
-  board: nodemcu-32s    # Must match your hardware
+  name: display_test_controller
+  friendly_name: display_test
 
-# Required for e-paper displays
-spi:
-  clk_pin: GPIO14
-  mosi_pin: GPIO13
-  miso_pin: GPIO12      # Can be removed if not used
-  mode: MODE0
-  clock_speed: 10MHz
+esp32:
+  board: esp32-c6-devkitm-1
+  variant: esp32c6
+  framework:
+    type: esp-idf
 
-# Your custom component
 external_components:
-  - source:
-      type: git
-      url: https://github.com/yourusername/esphome-custom-components
-    components: [gdep073e01]
+  - source: 
+      type: local
+      path: /components
+
+logger:
+
+api:
+  encryption:
+    key: "HhpDctFSVQFcpkPbjk5ljZ3ux3IKbAY8/fft3AoJJ40="
+
+ota:
+  - platform: esphome
+    password: "26cb5bd41399195a2429ea324e4139f9"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Display-Test Fallback Hotspot"
+    password: "LZ7rZuNsLytx"  
+
+
+spi:
+  clk_pin: GPIO18
+  mosi_pin: GPIO19
 
 display:
   - platform: gdep073e01
-    id: epaper_display
-    busy_pin: GPIO4
-    reset_pin: GPIO5
-    dc_pin: GPIO2
-    cs_pin: GPIO15
-    update_interval: 60s
+    cs_pin: GPIO0
+    dc_pin: GPIO1
+    busy_pin: GPIO2
+    reset_pin: GPIO3
+    model: 2.90in
+    full_update_every: 30
     lambda: |-
-      it.print(50, 50, id(font_default), "Hello World!");
-      it.line(50, 70, 200, 70);
+      it.fill(Color(255,0,0,0)));
 
-# Optional but recommended
-font:
-  - file: "gfonts://Roboto"
-    id: font_default
-    size: 20
-
-logger:
-  level: DEBUG
-
-ota:
-  password: "your_ota_password"
-
-wifi:
-  ssid: "your_wifi"
-  password: "your_password"
-
-api:
-  password: "your_api_password"
+captive_portal:    
+    
+    
